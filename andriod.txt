@@ -1,0 +1,3 @@
+title=Fridrich Messenger
+author=Nilusink
+orientation=portrait

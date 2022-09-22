@@ -1,0 +1,5 @@
+Just like every other messenger app, except that we care about privacy.
+
+At Fridrich, we try to be as responsible with data as possible. It has always bothered us to not know where your message actually lands, when you click the send button. So we wrote our own messaging app, with the goal of privacy, but also transparency from the developers.
+
+If you are interested in the source of the Fridrich Project, it is on GitHub under GNU-GPL 3.0 License: https://github.com/FridrichDerGosse

@@ -134,3 +134,4 @@ dmypy.json
 .expo/
 node_modules/
 tests/
+preBuild.py

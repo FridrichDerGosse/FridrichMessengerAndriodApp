@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View} from "react-native";
+import {Pressable, StyleSheet, Text, View} from "react-native";
 import {toDateTime} from "./tools";
 
 
@@ -11,6 +11,7 @@ function MessageElement(props) {
     let thisMessage = props.thisMessage
     let nextMessage = props.nextMessage
     let directionStyles = props.isSender ? rightStyles : leftStyles
+    let onPress = props.onPress
 
     let timeSent = toDateTime(thisMessage.time_sent)
 
@@ -23,11 +24,11 @@ function MessageElement(props) {
         && (nextMessage.sent_from === thisMessage.sent_from)
         && (nextMessage.time_sent - thisMessage.time_sent < groupTimeout)
 
-    function messageBoxStyle() {
+    function messageBoxStyle(isPressed) {
         // takes the defined message behaviour and converts it to the actual message style
         let out = {
             marginVertical: 8,
-            backgroundColor: "#181b28",
+            backgroundColor: isPressed ? "#666" : "#181b28",
             paddingHorizontal: 30,
             paddingVertical: 10,
             borderRadius: 30,
@@ -61,7 +62,11 @@ function MessageElement(props) {
 
     return (
         <View style={directionStyles.box}>
-            <View style={messageBoxStyle()}>
+            <Pressable
+                style={({pressed}) => messageBoxStyle(pressed)}
+                onPress={onPress.bind(this, thisMessage)}
+                // style={({pressed}) => messageBoxStyle(pressed)}
+            >
                 <View>
                     <Text style={defaultStyles.messageText}>
                         {thisMessage.content}
@@ -75,7 +80,7 @@ function MessageElement(props) {
                         }
                     </View>}
                 </View>
-            </View>
+            </Pressable>
         </View>
     )
 }

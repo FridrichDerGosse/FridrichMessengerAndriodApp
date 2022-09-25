@@ -1,8 +1,10 @@
-import {FlatList, Image, Pressable, StyleSheet, Text, TextInput, View} from "react-native";
+import {Modal, FlatList, Image, Pressable, StyleSheet, Text, TextInput, View} from "react-native";
 import {colorSchemes, chatIconText, chatIcon} from "./themes";
-import MessageElement from "./MessageElement";
 import {useEffect, useState} from "react";
 
+// local imports
+import SelectedMessagePopup from "./selectedMessagePopup";
+import MessageElement from "./MessageElement";
 import {send_message} from "./commFunctions";
 
 let params = null
@@ -24,8 +26,12 @@ function ChatScreen({navigation, route}) {
 
     let color_id = chat.id - 1 % colorSchemes.length
 
+    // define states
+    const [currentMessage, SetCurrentMessage] = useState(null)
+    const [currentMessageID, setCurrentMessageID] = useState(null)
+    const [showSelectedMessage, setShowSelectedMessage] = useState(false)
     const [messageText, setMessageText] = useState("")
-    const [updater, setUpdater] = useState(0)
+    const [_updater, setUpdater] = useState(0)
 
     useEffect(() => {
         const interval = setInterval(() => {
@@ -33,6 +39,11 @@ function ChatScreen({navigation, route}) {
         }, 250);
         return () => clearInterval(interval);
     }, []);
+
+    function setCurrentMessage(value) {
+        SetCurrentMessage(value)
+        setCurrentMessageID(reversed_messages.indexOf(value))
+    }
 
     function messageInputHandler(entered_text) {
         setMessageText(entered_text)
@@ -130,6 +141,19 @@ function ChatScreen({navigation, route}) {
                 </View>
             </View>
             <View style={styles.messagesBox}>
+                <Modal transparent={true} visible={showSelectedMessage}>
+                    {currentMessage &&
+                            <SelectedMessagePopup
+                            isSender={currentMessage.sent_from === username}
+                            isGroupChat={chat.user_names.length > 2}
+                            lastMessage={reversed_messages[currentMessageID + 1]}
+                            thisMessage={reversed_messages[currentMessageID]}
+                            nextMessage={reversed_messages[currentMessageID - 1]}
+                            onExit={setShowSelectedMessage.bind(this, false)}
+                        />
+
+                    }
+                </Modal>
                 <FlatList
                     overScrollMode="always"
                     data={reversed_messages} // copy list without reference
@@ -141,6 +165,7 @@ function ChatScreen({navigation, route}) {
                             lastMessage={reversed_messages[itemData.index + 1]}
                             thisMessage={reversed_messages[itemData.index]}
                             nextMessage={reversed_messages[itemData.index - 1]}
+                            onPress={(message) => {setCurrentMessage(message); setShowSelectedMessage(true)}}
                             id={itemData.item.id}
                         />
                     }}/>
